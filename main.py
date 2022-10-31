@@ -25,21 +25,21 @@ class Movie(db.Model):
     review = db.Column(db.String(250), nullable=False)
     img_url = db.Column(db.String(250), nullable=False)
 
-    def __init__(self, title, year, description, rating, ranking, review, img_url) -> None:
-        super().__init__()
+    # def __init__(self, title, year, description, rating, ranking, review, img_url) -> None:
+    #     super().__init__()
 
-        self.title = title
-        self.year = year
-        self.description = description
-        self.ranking = ranking
-        self.rating = rating
-        self.review = review
-        self.img_url = img_url
+    #     self.title = title
+    #     self.year = year
+    #     self.description = description
+    #     self.ranking = ranking
+    #     self.rating = rating
+    #     self.review = review
+    #     self.img_url = img_url
 
 
 @app.route("/")
 def home():
-    all_movies = Movie.query.all()
+    all_movies = Movie.query.order_by(Movie.ranking).all()
 
     return render_template("index.html", movies=all_movies)
 
@@ -50,13 +50,13 @@ def add():
     if movie_form.validate_on_submit():
         print(movie_form.title.data)
         new_movie = Movie(
-            movie_form.title.data,
-            movie_form.year.data,
-            movie_form.description.data,
-            movie_form.rating.data,
-            movie_form.ranking.data,
-            movie_form.review.data,
-            movie_form.img_url.data
+            title=movie_form.title.data,
+            year=movie_form.year.data,
+            description=movie_form.description.data,
+            rating=movie_form.rating.data,
+            ranking=movie_form.ranking.data,
+            review=movie_form.review.data,
+            img_url=movie_form.img_url.data
         )
         db.session.add(new_movie)
         db.session.commit()
