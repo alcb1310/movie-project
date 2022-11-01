@@ -68,6 +68,12 @@ def add():
     return render_template('add.html', form=movie_form)
 
 
+@app.route('/edit/<id>', methods=('GET', 'PUT'))
+def update(id: int):
+    print(id)
+    return render_template('edit.html')
+
+
 @app.route("/delete/<id>")
 def delete(id: int):
     try:
