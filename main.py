@@ -1,5 +1,4 @@
-from crypt import methods
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 import requests
@@ -25,16 +24,16 @@ class Movie(db.Model):
     review = db.Column(db.String(250), nullable=False)
     img_url = db.Column(db.String(250), nullable=False)
 
-    # def __init__(self, title, year, description, rating, ranking, review, img_url) -> None:
-    #     super().__init__()
+    def __init__(self, title, year, description, rating, ranking, review, img_url) -> None:
+        super().__init__()
 
-    #     self.title = title
-    #     self.year = year
-    #     self.description = description
-    #     self.ranking = ranking
-    #     self.rating = rating
-    #     self.review = review
-    #     self.img_url = img_url
+        self.title = title
+        self.year = year
+        self.description = description
+        self.ranking = ranking
+        self.rating = rating
+        self.review = review
+        self.img_url = img_url
 
 
 @app.route("/")
@@ -58,12 +57,27 @@ def add():
             review=movie_form.review.data,
             img_url=movie_form.img_url.data
         )
-        db.session.add(new_movie)
-        db.session.commit()
+        try:
+            db.session.add(new_movie)
+            db.session.commit()
+        except Exception as error:
+            print(error)
 
         return redirect(url_for('home'))
 
     return render_template('add.html', form=movie_form)
+
+
+@app.route("/delete/<id>")
+def delete(id: int):
+    try:
+        movie = Movie.query.filter_by(id=id).first_or_404()
+        db.session.delete(movie)
+        db.session.commit()
+    except Exception as error:
+        print(error)
+
+    return redirect(url_for('home'))
 
 
 db.create_all()
